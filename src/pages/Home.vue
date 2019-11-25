@@ -10,36 +10,37 @@
     <!-- 行程选择 -->
     <Row class="route-box" type="flex" align="middle">
       <i-col span="11">
-        <Button type="text" size="long">{{placeOfDeparture}}</Button>
+        <Button type="text" size="long">{{routerarr[0]}}</Button>
       </i-col>
       <i-col span="2">
-        <Icon type="md-repeat" size="28" color="#CBCBCB" />
+        <Icon @click="changerouter" type="md-repeat" size="28" color="#CBCBCB" />
       </i-col>
       <i-col span="11">
-        <Button type="text" size="long">{{destination}}</Button>
+        <Button type="text" size="long">{{routerarr[1]}}</Button>
       </i-col>
     </Row>
 
-    <!-- <i-col span="10">
-        <DatePicker type="date" :options="options1" placeholder="最早出发时间" style="width: 150px"></DatePicker>
-      </i-col>
-      <i-col span="4">
-        <Icon type="ios-remove" />
-      </i-col>
-      <i-col span="10">
-        <DatePicker type="date" :options="options1" placeholder="最早出发时间" style="width: 150px"></DatePicker>
-    </i-col>-->
-
     <!-- 时间选择 -->
-    <Row class="data-box" type="flex" align="middle">
+    <Row class="data-box" type="flex" justify="center" align="middle">
       <i-col span="11">
-        <Button type="text" size="long">{{pioneerData}}</Button>
+        <DatePicker
+          type="datetime"
+          format="yyyy-MM-dd HH:mm"
+          placeholder="最早出发时间"
+          style="width: 100%"
+        ></DatePicker>
       </i-col>
       <i-col span="2">
         <Icon type="md-remove" size="28" color="#CBCBCB" />
       </i-col>
       <i-col span="11">
-        <Button type="text" size="long">{{atLatestData}}</Button>
+        <DatePicker
+          type="datetime"
+          placement="bottom-end"
+          format="yyyy-MM-dd HH:mm"
+          placeholder="最晚出发时间"
+          style="width: 100%"
+        ></DatePicker>
       </i-col>
     </Row>
 
@@ -83,13 +84,18 @@
     <!-- 乘客 -->
     <div class="people">
       <div class="people-text">乘客</div>
-      <Row class="tab-box">
-        <i-col class="tab" span="7">李佳佳</i-col>  
-        <i-col class="tab" span="7">李佳佳</i-col>
-        <i-col class="tab" span="7">王思雨</i-col>
-        <i-col class="tab" span="7">王思雨</i-col>
-        <i-col class="tab" span="7">王思雨</i-col>
-        <i-col class="tab" span="7">王思雨</i-col>
+      <div class="tab-box">
+        <Tag
+          checkable
+          :checked='false'
+          color="success"
+          v-for="(item,index) in peoplearr"
+          @click="clicktab(item.id)"
+          :key="index"
+          class="tab"
+        >{{item.name}}</Tag>
+      </div>
+      <Row class="addtab-box" type="flex" justify="center">
         <i-col class="addtab" span="7">+添加乘客</i-col>
       </Row>
     </div>
@@ -107,10 +113,12 @@
 export default {
   data() {
     return {
-      placeOfDeparture: "出发地",
-      destination: "目的地",
-      pioneerData: "最早出发时间",
-      atLatestData: "最晚出发时间",
+      routerarr: ["出发地", "目的地"],
+      dataarr: [
+        { pioneerData: "最早出发时间" },
+        { atLatestData: "最晚出发时间" }
+      ],
+
       routeCause: [
         //出行原因
         {
@@ -141,20 +149,21 @@ export default {
           label: "豪华"
         }
       ],
+      peoplearr: [
+        { name: "李佳佳", id: 1 },
+        { name: "李佳佳", id: 2 },
+        { name: "李佳佳", id: 3 },
+        { name: "李佳佳", id: 4 },
+        { name: "李佳佳", id: 5 }
+      ],
       count: []
     };
   },
   methods: {
-    handleAdd() {
-      if (this.count.length) {
-        this.count.push(this.count[this.count.length - 1] + 1);
-      } else {
-        this.count.push(0);
-      }
-    },
-    handleClose2(event, name) {
-      const index = this.count.indexOf(name);
-      this.count.splice(index, 1);
+    changerouter() {//点击颠倒出发地目的地
+     var arr= this.routerarr.reverse();
+     this.routerarr=arr
+    
     }
   }
 };
@@ -213,12 +222,10 @@ input:-ms-input-placeholder {
     }
     //时间
     .data-box {
+      width: 100%;
       height: 60px;
       border-bottom: 6px solid #f5f6f8;
-      button {
-        font-size: 20px;
-        color: #cbcbcb;
-      }
+      padding: 0 8px;
     }
     //原因&价格
     .routeCause-box,
@@ -273,11 +280,13 @@ input:-ms-input-placeholder {
         color: #646464;
       }
       .tab-box {
+        width: 100%;
         display: flex;
-        justify-content: center;
+        justify-content: space-around;
         flex-wrap: wrap;
 
         .tab {
+          width: 30%;
           color: #8f8f8f;
           font-size: 14px;
           height: 40px;
@@ -287,23 +296,26 @@ input:-ms-input-placeholder {
           line-height: 40px;
           margin: 5px;
         }
-        .addtab {
-          color: #24c678;
-          font-size: 14px;
-          height: 40px;
-          border-radius: 5px;
-          border: 1px dashed #cbcbcb;
-          text-align: center;
-          line-height: 40px;
-          margin: 5px;
-        }
       }
     }
+    .addtab-box {
+      .addtab {
+        color: #24c678;
+        font-size: 14px;
+        height: 40px;
+        border-radius: 5px;
+        border: 1px dashed #cbcbcb;
+        text-align: center;
+        line-height: 40px;
+        margin: 5px;
+      }
+    }
+
     //提交
     .issue {
-      position: fixed;
+      //position: fixed;
       width: 100%;
-      bottom: 0px;
+      //bottom: 0px;
       padding-top: 20px;
       height: 100px;
       background: #f5f6f8;
